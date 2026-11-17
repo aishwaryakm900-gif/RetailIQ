@@ -191,7 +191,7 @@ export default async function LandingPage({
       </section>
 
       {/* Feature Grid */}
-      <section id="features" className="relative overflow-hidden py-16 sm:py-24 bg-white dark:bg-neutral-900 border-y border-gray-200 dark:border-neutral-800 transition-colors">
+      <section id="features" className="relative overflow-hidden scroll-mt-16 py-16 sm:py-24 bg-white dark:bg-neutral-900 border-y border-gray-200 dark:border-neutral-800 transition-colors">
         <FloatingGroceries mirror />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
@@ -304,7 +304,7 @@ export default async function LandingPage({
       </section>
 
       {/* 3-Step How It Works */}
-      <section id="how-it-works" className="relative overflow-hidden py-16 sm:py-24">
+      <section id="how-it-works" className="relative overflow-hidden scroll-mt-16 py-16 sm:py-24">
         <FloatingGroceries />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
@@ -363,7 +363,7 @@ export default async function LandingPage({
       </section>
 
       {/* Role Switcher Cards */}
-      <section id="roles" className="relative overflow-hidden py-16 bg-gray-100/60 dark:bg-neutral-900/60 border-t border-gray-200 dark:border-neutral-800">
+      <section id="roles" className="relative overflow-hidden scroll-mt-16 py-16 bg-gray-100/60 dark:bg-neutral-900/60 border-t border-gray-200 dark:border-neutral-800">
         <FloatingGroceries mirror />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
