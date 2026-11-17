@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { FloatingGroceries } from '@/components/landing/floating-groceries';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -105,9 +106,15 @@ export default async function LandingPage({
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28">
+        {/* Decorative floating grocery icons */}
+        <FloatingGroceries />
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           {/* Announcement Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-6 shadow-2xs">
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-6 shadow-2xs animate-float"
+            style={{ '--float-delay': '0s' } as React.CSSProperties}
+          >
             <Sparkles className="w-3.5 h-3.5" />
             <span>{t('badge')}</span>
           </div>
@@ -158,15 +165,24 @@ export default async function LandingPage({
 
           {/* Highlight KPI Pills */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold">
-            <div className="flex items-center gap-2 bg-white dark:bg-neutral-800/90 px-4 py-2 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-2xs">
+            <div
+              className="flex items-center gap-2 bg-white dark:bg-neutral-800/90 px-4 py-2 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-2xs animate-float"
+              style={{ '--float-delay': '0.4s' } as React.CSSProperties}
+            >
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>{t('pillLossAvoided')}</span>
             </div>
-            <div className="flex items-center gap-2 bg-white dark:bg-neutral-800/90 px-4 py-2 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-2xs">
+            <div
+              className="flex items-center gap-2 bg-white dark:bg-neutral-800/90 px-4 py-2 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-2xs animate-float"
+              style={{ '--float-delay': '1.1s' } as React.CSSProperties}
+            >
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>{t('pillFreshness')}</span>
             </div>
-            <div className="flex items-center gap-2 bg-white dark:bg-neutral-800/90 px-4 py-2 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-2xs">
+            <div
+              className="flex items-center gap-2 bg-white dark:bg-neutral-800/90 px-4 py-2 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-2xs animate-float"
+              style={{ '--float-delay': '1.8s' } as React.CSSProperties}
+            >
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>{t('pillZeroWaste')}</span>
             </div>
@@ -175,8 +191,9 @@ export default async function LandingPage({
       </section>
 
       {/* Feature Grid */}
-      <section id="features" className="py-16 sm:py-24 bg-white dark:bg-neutral-900 border-y border-gray-200 dark:border-neutral-800 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="features" className="relative overflow-hidden py-16 sm:py-24 bg-white dark:bg-neutral-900 border-y border-gray-200 dark:border-neutral-800 transition-colors">
+        <FloatingGroceries mirror />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('featuresTitle')}
@@ -188,7 +205,10 @@ export default async function LandingPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Feature 1 */}
-            <div className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all">
+            <div
+              className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all animate-float"
+              style={{ '--float-delay': '0s' } as React.CSSProperties}
+            >
               <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
                 <Package className="w-5 h-5" />
               </div>
@@ -201,7 +221,10 @@ export default async function LandingPage({
             </div>
 
             {/* Feature 2 */}
-            <div className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all">
+            <div
+              className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all animate-float"
+              style={{ '--float-delay': '0.4s' } as React.CSSProperties}
+            >
               <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 flex items-center justify-center mb-4">
                 <ClockAlert className="w-5 h-5" />
               </div>
@@ -214,7 +237,10 @@ export default async function LandingPage({
             </div>
 
             {/* Feature 3 */}
-            <div className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all">
+            <div
+              className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all animate-float"
+              style={{ '--float-delay': '0.8s' } as React.CSSProperties}
+            >
               <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
                 <Percent className="w-5 h-5" />
               </div>
@@ -227,7 +253,10 @@ export default async function LandingPage({
             </div>
 
             {/* Feature 4 */}
-            <div className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all">
+            <div
+              className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all animate-float"
+              style={{ '--float-delay': '1.2s' } as React.CSSProperties}
+            >
               <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
                 <Store className="w-5 h-5" />
               </div>
@@ -240,7 +269,10 @@ export default async function LandingPage({
             </div>
 
             {/* Feature 5 */}
-            <div className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all">
+            <div
+              className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all animate-float"
+              style={{ '--float-delay': '1.6s' } as React.CSSProperties}
+            >
               <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4">
                 <Sparkles className="w-5 h-5" />
               </div>
@@ -253,7 +285,10 @@ export default async function LandingPage({
             </div>
 
             {/* Feature 6 */}
-            <div className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all">
+            <div
+              className="p-6 rounded-card border border-gray-200 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all animate-float"
+              style={{ '--float-delay': '2s' } as React.CSSProperties}
+            >
               <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
                 <Bot className="w-5 h-5" />
               </div>
@@ -269,8 +304,9 @@ export default async function LandingPage({
       </section>
 
       {/* 3-Step How It Works */}
-      <section id="how-it-works" className="py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="how-it-works" className="relative overflow-hidden py-16 sm:py-24">
+        <FloatingGroceries />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('howItWorksTitle')}
@@ -278,7 +314,10 @@ export default async function LandingPage({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-card border border-gray-200 dark:border-neutral-700 shadow-2xs">
+            <div
+              className="bg-white dark:bg-neutral-800 p-6 rounded-card border border-gray-200 dark:border-neutral-700 shadow-2xs animate-float"
+              style={{ '--float-delay': '0s' } as React.CSSProperties}
+            >
               <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm tracking-wider uppercase">
                 Step 01
               </span>
@@ -290,7 +329,10 @@ export default async function LandingPage({
               </p>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-card border border-gray-200 dark:border-neutral-700 shadow-2xs">
+            <div
+              className="bg-white dark:bg-neutral-800 p-6 rounded-card border border-gray-200 dark:border-neutral-700 shadow-2xs animate-float"
+              style={{ '--float-delay': '0.6s' } as React.CSSProperties}
+            >
               <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm tracking-wider uppercase">
                 Step 02
               </span>
@@ -302,7 +344,10 @@ export default async function LandingPage({
               </p>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-card border border-gray-200 dark:border-neutral-700 shadow-2xs">
+            <div
+              className="bg-white dark:bg-neutral-800 p-6 rounded-card border border-gray-200 dark:border-neutral-700 shadow-2xs animate-float"
+              style={{ '--float-delay': '1.2s' } as React.CSSProperties}
+            >
               <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm tracking-wider uppercase">
                 Step 03
               </span>
@@ -318,8 +363,9 @@ export default async function LandingPage({
       </section>
 
       {/* Role Switcher Cards */}
-      <section id="roles" className="py-16 bg-gray-100/60 dark:bg-neutral-900/60 border-t border-gray-200 dark:border-neutral-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="roles" className="relative overflow-hidden py-16 bg-gray-100/60 dark:bg-neutral-900/60 border-t border-gray-200 dark:border-neutral-800">
+        <FloatingGroceries mirror />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('rolesTitle')}
@@ -331,7 +377,10 @@ export default async function LandingPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Shopkeeper Portal */}
-            <div className="bg-white dark:bg-neutral-800 p-8 rounded-card border border-gray-200 dark:border-neutral-700 shadow-card flex flex-col justify-between">
+            <div
+              className="bg-white dark:bg-neutral-800 p-8 rounded-card border border-gray-200 dark:border-neutral-700 shadow-card flex flex-col justify-between animate-float"
+              style={{ '--float-delay': '0s' } as React.CSSProperties}
+            >
               <div>
                 <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mb-5">
                   <ShieldCheck className="w-6 h-6" />
@@ -352,7 +401,10 @@ export default async function LandingPage({
             </div>
 
             {/* Customer Portal */}
-            <div className="bg-white dark:bg-neutral-800 p-8 rounded-card border border-gray-200 dark:border-neutral-700 shadow-card flex flex-col justify-between">
+            <div
+              className="bg-white dark:bg-neutral-800 p-8 rounded-card border border-gray-200 dark:border-neutral-700 shadow-card flex flex-col justify-between animate-float"
+              style={{ '--float-delay': '0.8s' } as React.CSSProperties}
+            >
               <div>
                 <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-5">
                   <ShoppingBag className="w-6 h-6" />
