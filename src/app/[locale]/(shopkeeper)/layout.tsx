@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Topbar } from '@/components/layout/topbar';
 import { MobileDrawer } from '@/components/layout/mobile-drawer';
 import { PageTransition } from '@/components/layout/page-transition';
+import { StoreAssistantWidget } from '@/components/assistant/store-assistant-widget';
 
 export default function ShopkeeperLayout({
   children,
@@ -33,6 +34,7 @@ export default function ShopkeeperLayout({
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
+      <StoreAssistantWidget />
     </div>
   );
 }

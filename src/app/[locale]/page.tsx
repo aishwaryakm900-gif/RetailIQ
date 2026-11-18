@@ -68,12 +68,6 @@ export default async function LandingPage({
             <a href="#roles" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               {t('navBenefits')}
             </a>
-            <Link href="/rescue" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1">
-              <span>{t('navStockRescue')}</span>
-              <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-full font-semibold">
-                Live
-              </span>
-            </Link>
           </nav>
 
           {/* Right Controls: Theme Toggle, Language Switcher, Sign In Button */}
@@ -141,7 +135,7 @@ export default async function LandingPage({
               </Button>
             </Link>
 
-            <Link href="/rescue">
+            <Link href="/marketplace">
               <Button
                 variant="outline"
                 size="lg"
@@ -416,7 +410,7 @@ export default async function LandingPage({
                   {t('roleCustomerDesc')}
                 </p>
               </div>
-              <Link href="/rescue">
+              <Link href="/marketplace">
                 <Button variant="outline" className="w-full border-gray-300 dark:border-neutral-600 text-gray-800 dark:text-white font-semibold flex items-center justify-center gap-2">
                   <span>{t('roleCustomerAction')}</span>
                   <ChevronRight className="w-4 h-4" />

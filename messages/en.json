@@ -3,6 +3,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "inventory": "Inventory",
+    "billing": "Billing",
     "forecast": "Demand Forecasting",
     "expiry": "Expiry Alerts",
     "discounts": "Smart Discounts",

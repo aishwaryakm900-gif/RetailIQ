@@ -3,6 +3,7 @@
   "nav": {
     "dashboard": "डैशबोर्ड",
     "inventory": "स्टॉक",
+    "billing": "बिलिंग",
     "forecast": "मांग का अनुमान",
     "expiry": "एक्सपायरी अलर्ट",
     "discounts": "स्मार्ट डिस्काउंट",

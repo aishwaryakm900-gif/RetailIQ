@@ -9,15 +9,16 @@
 /build
 
 # Local environment and secret files
-.env*.local
 .env
-!.env.example
+.env.*
+.env*.local
 
 # Database files
 *.db
 *.db-journal
 dev.db
 dev.db-journal
+.retailiq-data/
 
 # Logs
 npm-debug.log*
@@ -38,3 +39,4 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
