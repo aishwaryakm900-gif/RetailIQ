@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Topbar } from '@/components/layout/topbar';
 import { MobileDrawer } from '@/components/layout/mobile-drawer';
+import { PageTransition } from '@/components/layout/page-transition';
 import { StoreAssistantWidget } from '@/components/assistant/store-assistant-widget';
 
 export default function ShopkeeperLayout({
@@ -30,7 +31,7 @@ export default function ShopkeeperLayout({
       <div className="flex-1 lg:pl-64 flex flex-col min-w-0">
         <Topbar onOpenMobileNav={() => setMobileNavOpen(true)} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          {children}
+          <PageTransition>{children}</PageTransition>
         </main>
       </div>
       <StoreAssistantWidget />

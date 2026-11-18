@@ -80,3 +80,80 @@
   font-variant-numeric: tabular-nums;
 }
 
+@layer components {
+  /* Page transition: fades in + slides up on every route change.
+     Uses only opacity/transform, so it looks the same in light & dark. */
+  .page-enter {
+    animation: page-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter {
+      animation: none;
+    }
+  }
+
+  /* Floating elements: gentle vertical bob for content items. */
+  .animate-float {
+    animation: float-y 6s ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+
+  /* Slow drifting float with a slight sway, for background decorations. */
+  .animate-float-drift {
+    animation: float-drift var(--float-duration, 8s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+
+  @keyframes float-y {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes float-drift {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-4deg);
+    }
+    50% {
+      transform: translateY(-16px) rotate(5deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-float-drift {
+      animation: none;
+    }
+  }
+}
+
+@layer base {
+  /* Smooth scrolling for in-page anchor navigation (navbar links). */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
