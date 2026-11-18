@@ -9,9 +9,9 @@
 /build
 
 # Local environment and secret files
-.env*.local
 .env
-!.env.example
+.env.*
+.env*.local
 
 # Database files
 *.db
@@ -38,3 +38,4 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+

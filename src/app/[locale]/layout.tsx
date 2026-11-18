@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/navigation';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme/theme-context';
+import { RetailStoreProvider } from '@/components/providers/retail-store-provider';
 import '@/styles/globals.css';
 
 const inter = Inter({
@@ -58,13 +59,16 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
+      suppressHydrationWarning
       className={`${inter.variable} ${devanagari.variable} ${kannada.variable}`}
     >
-      <body className="min-h-screen bg-[#F9FAFB] text-neutral-900 font-sans antialiased tabular-nums">
+      <body className="min-h-screen bg-[#F9FAFB] dark:bg-[#0B0F19] text-neutral-900 dark:text-neutral-100 font-sans antialiased tabular-nums">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
-            {children}
-            <Toaster position="top-right" richColors closeButton />
+            <RetailStoreProvider>
+              {children}
+              <Toaster position="top-right" richColors closeButton />
+            </RetailStoreProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

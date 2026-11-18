@@ -57,7 +57,7 @@ export default function LoginPage() {
       setIsLoading(false);
       toast.success(tAuth('loginTitle') + ' - Demo Mode');
       if (activeRole === 'customer') {
-        router.push('/rescue');
+        router.push('/marketplace');
       } else {
         router.push('/dashboard');
       }
@@ -71,7 +71,7 @@ export default function LoginPage() {
       setIsLoading(false);
       toast.success(`Signed in as ${role === 'shopkeeper' ? 'Shop Owner' : role === 'customer' ? 'Customer' : 'Admin'}!`);
       if (role === 'customer') {
-        router.push('/rescue');
+        router.push('/marketplace');
       } else {
         router.push('/dashboard');
       }

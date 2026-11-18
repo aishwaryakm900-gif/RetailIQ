@@ -46,6 +46,7 @@ export function Sidebar({ className = '', onNavigate }: SidebarProps) {
         <div className="h-16 flex items-center px-6 border-b border-gray-100 dark:border-neutral-800">
           <Link
             href="/dashboard"
+            prefetch={true}
             onClick={onNavigate}
             className="flex items-center gap-3 group focus:outline-hidden"
           >
@@ -75,6 +76,7 @@ export function Sidebar({ className = '', onNavigate }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 onClick={onNavigate}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive

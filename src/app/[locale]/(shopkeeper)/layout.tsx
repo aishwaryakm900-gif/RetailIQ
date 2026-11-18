@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Topbar } from '@/components/layout/topbar';
 import { MobileDrawer } from '@/components/layout/mobile-drawer';
+import { StoreAssistantWidget } from '@/components/assistant/store-assistant-widget';
 
 export default function ShopkeeperLayout({
   children,
@@ -32,6 +33,7 @@ export default function ShopkeeperLayout({
           {children}
         </main>
       </div>
+      <StoreAssistantWidget />
     </div>
   );
 }

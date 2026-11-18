@@ -134,7 +134,7 @@ export default async function LandingPage({
               </Button>
             </Link>
 
-            <Link href="/rescue">
+            <Link href="/marketplace">
               <Button
                 variant="outline"
                 size="lg"
@@ -364,7 +364,7 @@ export default async function LandingPage({
                   {t('roleCustomerDesc')}
                 </p>
               </div>
-              <Link href="/rescue">
+              <Link href="/marketplace">
                 <Button variant="outline" className="w-full border-gray-300 dark:border-neutral-600 text-gray-800 dark:text-white font-semibold flex items-center justify-center gap-2">
                   <span>{t('roleCustomerAction')}</span>
                   <ChevronRight className="w-4 h-4" />
