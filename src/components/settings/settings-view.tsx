@@ -110,7 +110,7 @@ export function SettingsView() {
                 Kirana Store Profile
               </h2>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Appears on Stock Rescue posters, receipts, and WhatsApp shares
+                Appears on invoices, receipts, and WhatsApp offer shares
               </p>
             </div>
           </div>
@@ -153,21 +153,6 @@ export function SettingsView() {
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-3.5 py-2 text-sm rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-white"
             />
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Default Stock Rescue Radius
-            </label>
-            <select
-              value={defaultRadiusM}
-              onChange={(e) => setDefaultRadiusM(Number(e.target.value))}
-              className="w-full px-3.5 py-2 text-sm rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-white"
-            >
-              <option value={500}>500 meters (Hyper-local walk-in)</option>
-              <option value={1000}>1 kilometer (Neighborhood default)</option>
-              <option value={2000}>2 kilometers (Extended locality)</option>
-            </select>
           </div>
         </div>
 

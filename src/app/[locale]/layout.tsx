@@ -30,7 +30,7 @@ const kannada = Noto_Sans_Kannada({
 });
 
 export const metadata: Metadata = {
-  title: 'RetailIQ - AI-Powered Retail Intelligence & Stock Rescue',
+  title: 'RetailIQ - AI-Powered Retail Intelligence & Inventory Management',
   description:
     'AI-powered inventory risk prediction and local stock recovery platform for small neighbourhood retailers in India.',
 };

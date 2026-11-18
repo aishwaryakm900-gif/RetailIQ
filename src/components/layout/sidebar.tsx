@@ -10,7 +10,6 @@ import {
   TrendingUp,
   ClockAlert,
   Percent,
-  Store,
   FileText,
   Settings,
   ShieldCheck,
@@ -34,7 +33,6 @@ export function Sidebar({ className = '', onNavigate }: SidebarProps) {
     { href: '/forecast', label: tNav('forecast'), icon: TrendingUp },
     { href: '/expiry', label: tNav('expiry'), icon: ClockAlert },
     { href: '/discounts', label: tNav('discounts'), icon: Percent },
-    { href: '/rescue', label: tNav('rescue'), icon: Store },
     { href: '/reports', label: tNav('reports'), icon: FileText },
     { href: '/settings', label: tNav('settings'), icon: Settings },
   ];

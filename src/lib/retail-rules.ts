@@ -133,7 +133,7 @@ export function assessBatchExpiryRisk(
     riskLevel,
     recommendedAction: discountRec.clearsFloor
       ? `Apply ${discountRec.recommendedDiscountPct}% discount`
-      : 'Create bundle / Stock Rescue',
+      : 'Create bundle / Clearance offer',
     recommendedDiscountPct: discountRec.recommendedDiscountPct,
     priceFloorCleared: discountRec.clearsFloor,
   };

@@ -67,12 +67,6 @@ export default async function LandingPage({
             <a href="#roles" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               {t('navBenefits')}
             </a>
-            <Link href="/rescue" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1">
-              <span>{t('navStockRescue')}</span>
-              <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-full font-semibold">
-                Live
-              </span>
-            </Link>
           </nav>
 
           {/* Right Controls: Theme Toggle, Language Switcher, Sign In Button */}

@@ -258,7 +258,7 @@ export function ExpiryView() {
             {stats.critical} batches
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Immediate Stock Rescue priority
+            Immediate clearance priority
           </p>
         </div>
 
@@ -647,15 +647,6 @@ export function ExpiryView() {
               </div>
 
               <div className="flex flex-wrap items-center gap-4 text-xs">
-                <label className="inline-flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={shareStockRescue}
-                    onChange={(e) => setShareStockRescue(e.target.checked)}
-                    className="rounded border-gray-300 text-emerald-600"
-                  />
-                  List on Stock Rescue Marketplace
-                </label>
                 <label className="inline-flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"

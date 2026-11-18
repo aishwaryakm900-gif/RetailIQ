@@ -200,7 +200,7 @@ export function DiscountsView() {
       offer.type === 'BUNDLE'
         ? `Combo Offer: ${offer.productName} + ${offer.bundleWithName ?? 'Combo Item'}`
         : `${offer.discountPct}% OFF on ${offer.productName} — Now ${formatINR(offer.offerPrice, 'en-IN')} (MRP ${formatINR(offer.originalPrice, 'en-IN')})`;
-    return `Fresh neighborhood deal at ${shop.name}! ${dealText}. ${offer.qtyAvailable} packs left until ${offer.withdrawAt}. Reserve online via RetailIQ Stock Rescue to lock a 2-hour pickup hold!`;
+    return `Fresh neighborhood deal at ${shop.name}! ${dealText}. ${offer.qtyAvailable} packs left until ${offer.withdrawAt}. Visit our store or reply to reserve your pack!`;
   };
 
   const copyCaption = async (offer: Offer) => {
@@ -828,15 +828,6 @@ export function DiscountsView() {
 
                   {/* Channels Checkboxes */}
                   <div className="flex flex-wrap items-center gap-4 text-xs pt-1">
-                    <label className="inline-flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-300">
-                      <input
-                        type="checkbox"
-                        checked={channelRescue}
-                        onChange={(e) => setChannelRescue(e.target.checked)}
-                        className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                      />
-                      Stock Rescue Marketplace
-                    </label>
                     <label className="inline-flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-300">
                       <input
                         type="checkbox"
