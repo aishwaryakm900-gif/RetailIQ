@@ -112,7 +112,7 @@ export function QuickPosModal({ initialProductId, intlLocale, onClose }: QuickPo
                 Quick POS Sale (FEFO)
               </h2>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Deducts earliest-expiry batches first • Never allows negative stock
+                FEFO – First Expired, First Out: Products with the nearest expiry date are sold first.
               </p>
             </div>
           </div>
@@ -334,7 +334,7 @@ export function ProductBatchModal({
 
           <div className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Batches (Ordered FEFO — Earliest Expiry First)
+              Batches (FEFO – First Expired, First Out: nearest expiry sells first)
             </h3>
             {productBatches.map((batch, idx) => {
               const risk = assessBatchExpiryRisk(batch, product);

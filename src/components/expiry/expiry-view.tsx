@@ -225,7 +225,7 @@ export function ExpiryView() {
             {tNav('expiry')} Analysis
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Leftover risk projection before batch expiry with price-floor protected recovery actions.
+            Expiry Risk identifies products nearing their expiry date so you can sell them first and prevent wastage.
           </p>
         </div>
 

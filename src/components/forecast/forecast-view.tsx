@@ -193,8 +193,7 @@ export function ForecastView() {
             </Badge>
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Predict daily unit velocity with confidence intervals and approve pack-aligned supplier
-            reorders.
+            Demand Forecasting predicts how much stock may be needed. Reorder Recommendation suggests when to purchase more stock.
           </p>
         </div>
 

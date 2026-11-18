@@ -1,5 +1,14 @@
 import { RETAIL_CONFIG, ProductCategory } from './retail-config';
-import { Batch, Offer, Product, Sale, SaleItem } from './retail-types';
+import {
+  Batch,
+  BatchDeductionDetail,
+  BillItem,
+  DailySalesPoint,
+  Offer,
+  Product,
+  Sale,
+  SaleItem,
+} from './retail-types';
 
 /**
  * Compute whole days difference from today (local calendar day) to target YYYY-MM-DD date.
@@ -655,5 +664,238 @@ export function runReadOnlyAssistant(
     columns: ['Product', 'On Hand', 'Min Stock', 'Days Cover'],
     rows: lowStockRows,
   };
+}
+
+export interface AtomicBillingRequestItem {
+  productId: string;
+  qty: number;
+}
+
+export type AtomicBillingResult =
+  | {
+      ok: true;
+      billItems: BillItem[];
+      saleItems: SaleItem[];
+      updatedBatches: Batch[];
+      updatedProducts: Product[];
+      subtotal: number;
+      discountPct: number;
+      discountAmount: number;
+      taxAmount: number;
+      grandTotal: number;
+      totalUnits: number;
+    }
+  | {
+      ok: false;
+      error: string;
+      failedProductId?: string;
+    };
+
+/**
+ * Atomic multi-item FEFO billing transaction.
+ * - Uses authoritative product prices from inventory (never trusts client prices/totals).
+ * - Deducts earliest-expiry batches first (FEFO – First Expired, First Out).
+ * - All-or-nothing: if any item has insufficient stock, zero stock is deducted.
+ */
+export function executeAtomicBillingFEFO(
+  products: Product[],
+  batches: Batch[],
+  requestedItems: AtomicBillingRequestItem[],
+  rawDiscountPct: number = 0,
+  billId: string = `bill-${Date.now()}`,
+  now: Date = new Date()
+): AtomicBillingResult {
+  if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
+    return { ok: false, error: 'Add at least one product before generating a bill.' };
+  }
+
+  // Merge duplicate product rows cleanly before validating stock
+  const mergedMap = new Map<string, number>();
+  for (const item of requestedItems) {
+    if (!item.productId || typeof item.qty !== 'number' || !Number.isFinite(item.qty)) {
+      return { ok: false, error: 'Invalid product or quantity in bill.' };
+    }
+    const qty = Math.floor(item.qty);
+    if (qty <= 0) {
+      return {
+        ok: false,
+        error: 'Quantity must be at least 1 for every product.',
+        failedProductId: item.productId,
+      };
+    }
+    mergedMap.set(item.productId, (mergedMap.get(item.productId) ?? 0) + qty);
+  }
+
+  // Work on cloned batches so failures never cause partial deductions
+  let workingBatches: Batch[] = batches.map((b) => ({ ...b }));
+  const productMap = new Map(products.map((p) => [p.id, p]));
+  const billItems: BillItem[] = [];
+  const saleItems: SaleItem[] = [];
+  const soldQtyByProduct = new Map<string, number>();
+
+  let subtotal = 0;
+  let totalUnits = 0;
+  let lineIndex = 0;
+
+  for (const [productId, qty] of Array.from(mergedMap.entries())) {
+    const product = productMap.get(productId);
+    if (!product) {
+      return {
+        ok: false,
+        error: `Selected product (${productId}) was not found in inventory.`,
+        failedProductId: productId,
+      };
+    }
+
+    // Earliest-expiry-first (FEFO) batch selection
+    const eligibleBatches = workingBatches
+      .filter((b) => b.productId === productId && b.qtyOnHand > 0)
+      .sort((a, b) => a.expiryDate.localeCompare(b.expiryDate));
+
+    const availableStock = eligibleBatches.reduce((sum, b) => sum + b.qtyOnHand, 0);
+    if (availableStock < qty) {
+      return {
+        ok: false,
+        error: `Insufficient stock for ${product.name}. Requested ${qty}, available ${availableStock}.`,
+        failedProductId: productId,
+      };
+    }
+
+    let remaining = qty;
+    const deductions = new Map<string, number>();
+    const batchDeductions: BatchDeductionDetail[] = [];
+    const authoritativePrice = Number(product.sellingPrice) || 0;
+
+    for (const batch of eligibleBatches) {
+      if (remaining <= 0) break;
+      const take = Math.min(batch.qtyOnHand, remaining);
+      deductions.set(batch.id, take);
+      batchDeductions.push({
+        batchId: batch.id,
+        batchNo: batch.batchNo,
+        expiryDate: batch.expiryDate,
+        qty: take,
+        costPrice: batch.costPrice,
+      });
+      saleItems.push({
+        productId,
+        batchId: batch.id,
+        qty: take,
+        unitPrice: authoritativePrice,
+      });
+      remaining -= take;
+    }
+
+    workingBatches = workingBatches.map((b) => {
+      const taken = deductions.get(b.id);
+      if (!taken) return b;
+      return { ...b, qtyOnHand: b.qtyOnHand - taken };
+    });
+
+    const lineSubtotal = Math.round(authoritativePrice * qty * 100) / 100;
+    subtotal += lineSubtotal;
+    totalUnits += qty;
+    soldQtyByProduct.set(productId, qty);
+    lineIndex += 1;
+
+    billItems.push({
+      id: `${billId}-item-${lineIndex}`,
+      billId,
+      productId: product.id,
+      productName: product.name,
+      sku: product.sku,
+      barcode: product.barcode,
+      category: product.category,
+      qty,
+      unitPrice: authoritativePrice,
+      subtotal: lineSubtotal,
+      batchDeductions,
+    });
+  }
+
+  subtotal = Math.round(subtotal * 100) / 100;
+  const discountPct = Math.min(50, Math.max(0, Number(rawDiscountPct) || 0));
+  const discountAmount = Math.round(subtotal * (discountPct / 100) * 100) / 100;
+  const taxAmount = 0; // No tax configuration exists in RetailIQ
+  const grandTotal = Math.max(0, Math.round((subtotal - discountAmount + taxAmount) * 100) / 100);
+
+  // Update product movement & daily demand avg cleanly for sold items
+  const updatedProducts: Product[] = products.map((p) => {
+    const soldQty = soldQtyByProduct.get(p.id);
+    if (!soldQty) return p;
+
+    const remainingBatches = workingBatches
+      .filter((b) => b.productId === p.id && b.qtyOnHand > 0)
+      .sort((a, b) => a.expiryDate.localeCompare(b.expiryDate));
+
+    const earliestDays = remainingBatches[0] ? daysUntil(remainingBatches[0].expiryDate, now) : 999;
+    const nextDemandAvg = Math.round((p.dailyDemandAvg * 0.85 + soldQty * 0.15) * 10) / 10;
+
+    let nextMoverState = p.moverState;
+    if (remainingBatches.length > 0 && earliestDays <= RETAIL_CONFIG.expiryRiskThresholds.highDays) {
+      nextMoverState = 'near-expiry';
+    } else if (soldQty > 0 && (p.moverState === 'dead stock' || p.moverState === 'slow-moving')) {
+      nextMoverState = 'normal';
+    }
+
+    return {
+      ...p,
+      dailyDemandAvg: Math.max(0.5, nextDemandAvg),
+      moverState: nextMoverState,
+    };
+  });
+
+  return {
+    ok: true,
+    billItems,
+    saleItems,
+    updatedBatches: workingBatches,
+    updatedProducts,
+    subtotal,
+    discountPct,
+    discountAmount,
+    taxAmount,
+    grandTotal,
+    totalUnits,
+  };
+}
+
+/**
+ * Updates or creates today's DailySalesPoint so Dashboard & Reports charts update immediately.
+ */
+export function upsertDailySalesSeries(
+  series: DailySalesPoint[],
+  revenueDelta: number,
+  unitsDelta: number,
+  wasteAvoidedDelta: number = 0,
+  now: Date = new Date()
+): DailySalesPoint[] {
+  const todayIso = addDaysIso(now, 0);
+  const label = now.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+  const exists = series.some((pt) => pt.date === todayIso);
+
+  if (exists) {
+    return series.map((pt) =>
+      pt.date === todayIso
+        ? {
+            ...pt,
+            revenue: Math.round((pt.revenue + revenueDelta) * 100) / 100,
+            units: pt.units + unitsDelta,
+            wasteAvoided: Math.round((pt.wasteAvoided + wasteAvoidedDelta) * 100) / 100,
+          }
+        : pt
+    );
+  }
+
+  return [
+    ...series.slice(-13),
+    {
+      date: todayIso,
+      label,
+      revenue: Math.round(revenueDelta * 100) / 100,
+      units: unitsDelta,
+      wasteAvoided: Math.round(wasteAvoidedDelta * 100) / 100,
+    },
+  ];
 }
 

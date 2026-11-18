@@ -6,6 +6,7 @@ import { Link, usePathname } from '@/navigation';
 import {
   LayoutDashboard,
   Boxes,
+  Receipt,
   TrendingUp,
   ClockAlert,
   Percent,
@@ -29,6 +30,7 @@ export function Sidebar({ className = '', onNavigate }: SidebarProps) {
   const navItems = [
     { href: '/dashboard', label: tNav('dashboard'), icon: LayoutDashboard },
     { href: '/inventory', label: tNav('inventory'), icon: Boxes },
+    { href: '/billing', label: tNav('billing'), icon: Receipt },
     { href: '/forecast', label: tNav('forecast'), icon: TrendingUp },
     { href: '/expiry', label: tNav('expiry'), icon: ClockAlert },
     { href: '/discounts', label: tNav('discounts'), icon: Percent },

@@ -18,6 +18,7 @@
 *.db-journal
 dev.db
 dev.db-journal
+.retailiq-data/
 
 # Logs
 npm-debug.log*

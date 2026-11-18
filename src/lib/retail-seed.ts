@@ -1,6 +1,8 @@
 import {
   ActivityEvent,
+  ArchivedReport,
   Batch,
+  Bill,
   DailySalesPoint,
   Offer,
   Product,
@@ -15,7 +17,7 @@ export const PRIMARY_SHOP_ID = 'shop-annapoorna-01';
 
 /**
  * Builds clean store configuration with ZERO demo inventory items or batches.
- * Products, batches, sales, offers, and recommendations start completely clean
+ * Products, batches, sales, bills, offers, and recommendations start completely clean
  * and are populated dynamically as real items and batches are onboarded.
  */
 export function buildSeedData(now: Date = new Date()): {
@@ -25,6 +27,8 @@ export function buildSeedData(now: Date = new Date()): {
   products: Product[];
   batches: Batch[];
   sales: Sale[];
+  bills: Bill[];
+  archivedReports: ArchivedReport[];
   offers: Offer[];
   reservations: Reservation[];
   recommendations: Recommendation[];
@@ -119,6 +123,8 @@ export function buildSeedData(now: Date = new Date()): {
     products: [],
     batches: [],
     sales: [],
+    bills: [],
+    archivedReports: [],
     offers: [],
     reservations: [],
     recommendations: [],

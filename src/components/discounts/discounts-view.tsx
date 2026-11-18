@@ -223,8 +223,7 @@ export function DiscountsView() {
             {tNav('discounts')} & Campaign Pack
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            5%-step discount simulator enforcing cost floor (R3), category auto-withdraw (R2), and
-            instant WhatsApp + QR posters.
+            Dynamic Discount suggests discounts to sell slow-moving or expiring products while protecting your purchase cost.
           </p>
         </div>
 

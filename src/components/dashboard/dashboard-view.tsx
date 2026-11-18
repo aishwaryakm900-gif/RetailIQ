@@ -9,44 +9,34 @@ import {
   AlertTriangle,
   ClockAlert,
   ArrowUpRight,
-  Sparkles,
-  Calendar,
   ShoppingCart,
+  Filter,
+  RotateCcw,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   BarChart,
   Bar,
+  Legend,
 } from 'recharts';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatINR } from '@/lib/utils';
 import { useRetailStore } from '@/components/providers/retail-store-provider';
-import {
-  assessBatchExpiryRisk,
-  daysUntil,
-} from '@/lib/retail-rules';
+import { PRODUCT_CATEGORIES } from '@/lib/retail-config';
+import { daysUntil } from '@/lib/retail-rules';
 
 export function DashboardView() {
   const t = useTranslations('dashboard');
   const locale = useLocale();
   const intlLocale = locale === 'kn' ? 'kn-IN' : locale === 'hi' ? 'hi-IN' : 'en-IN';
 
-  const {
-    shop,
-    products,
-    batches,
-    salesSeries,
-    offers,
-  } = useRetailStore();
+  const { shop, products, batches, sales } = useRetailStore();
 
-  const [range, setRange] = useState<'7d' | '14d'>('7d');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   // Time-aware greeting
   const hour = new Date().getHours();
@@ -55,71 +45,118 @@ export function DashboardView() {
   else if (hour >= 17) greetingKey = 'greetingEvening';
   const greeting = t(greetingKey, { name: shop.ownerName.split(' ')[0] });
 
-  // Live aggregated metrics from store
+  // Available categories (all configured categories + any extra in catalog)
+  const availableCategories = useMemo(() => {
+    const set = new Set<string>(PRODUCT_CATEGORIES);
+    products.forEach((p) => set.add(p.category));
+    return Array.from(set);
+  }, [products]);
+
+  // Filtered products & batches based on selected category
+  const scopedProducts = useMemo(() => {
+    if (selectedCategory === 'ALL') return products;
+    return products.filter((p) => p.category === selectedCategory);
+  }, [products, selectedCategory]);
+
+  const scopedProductIds = useMemo(
+    () => new Set(scopedProducts.map((p) => p.id)),
+    [scopedProducts]
+  );
+
+  const scopedBatches = useMemo(() => {
+    if (selectedCategory === 'ALL') return batches;
+    return batches.filter((b) => scopedProductIds.has(b.productId));
+  }, [batches, selectedCategory, scopedProductIds]);
+
+  // Live aggregated KPI metrics & category/product chart data
   const metrics = useMemo(() => {
     const stockByProduct = new Map<string, number>();
     let inventoryValue = 0;
 
-    batches.forEach((b) => {
+    scopedBatches.forEach((b) => {
       if (b.qtyOnHand > 0) {
         stockByProduct.set(b.productId, (stockByProduct.get(b.productId) ?? 0) + b.qtyOnHand);
         inventoryValue += b.qtyOnHand * b.costPrice;
       }
     });
 
-    const lowStockProducts = products.filter(
+    const lowStockProducts = scopedProducts.filter(
       (p) => (stockByProduct.get(p.id) ?? 0) < p.minStock
     );
 
-    const nearExpiryBatches = batches.filter(
+    const nearExpiryBatches = scopedBatches.filter(
       (b) => b.qtyOnHand > 0 && daysUntil(b.expiryDate) <= 7
     );
 
     const nearExpiryProductIds = new Set(nearExpiryBatches.map((b) => b.productId));
 
-    const assessments = nearExpiryBatches
-      .map((b) => {
-        const p = products.find((pr) => pr.id === b.productId);
-        return p ? assessBatchExpiryRisk(b, p) : null;
-      })
-      .filter((x): x is NonNullable<typeof x> => x !== null)
-      .sort((a, b) => b.estimatedLoss - a.estimatedLoss);
-
-    const totalWasteAvoided = salesSeries.reduce((s, d) => s + d.wasteAvoided, 0);
-
-    // Top-selling product categories (from daily demand * 7)
-    const categoryTotals = new Map<string, number>();
-    products.forEach((p) => {
-      const weeklyUnits = Math.round(p.dailyDemandAvg * 7);
-      categoryTotals.set(p.category, (categoryTotals.get(p.category) ?? 0) + weeklyUnits);
+    // Real units sold per product from sales history
+    const soldUnitsByProduct = new Map<string, number>();
+    sales.forEach((sale) => {
+      sale.items.forEach((item) => {
+        soldUnitsByProduct.set(
+          item.productId,
+          (soldUnitsByProduct.get(item.productId) ?? 0) + item.qty
+        );
+      });
     });
-    const topCategories = Array.from(categoryTotals.entries())
-      .map(([category, units]) => ({
-        category: category.replace('Oils and Fats', 'Oils').replace('Daily Essentials', 'Essentials'),
-        units,
+
+    // Category breakdown (for ALL view)
+    const categoryTotals = new Map<string, { fullCategory: string; sold: number; stock: number }>();
+    products.forEach((p) => {
+      const existing = categoryTotals.get(p.category) ?? {
+        fullCategory: p.category,
+        sold: 0,
+        stock: 0,
+      };
+      const prodStock = batches
+        .filter((b) => b.productId === p.id && b.qtyOnHand > 0)
+        .reduce((s, b) => s + b.qtyOnHand, 0);
+      const sold = soldUnitsByProduct.get(p.id) ?? 0;
+      existing.sold += sold;
+      existing.stock += prodStock;
+      categoryTotals.set(p.category, existing);
+    });
+
+    const topCategories = Array.from(categoryTotals.values())
+      .map((entry) => ({
+        category: entry.fullCategory
+          .replace('Oils and Fats', 'Oils')
+          .replace('Daily Essentials', 'Essentials')
+          .replace('Packaged Foods', 'Packaged'),
+        fullCategory: entry.fullCategory,
+        sold: entry.sold,
+        stock: entry.stock,
       }))
-      .sort((a, b) => b.units - a.units)
-      .slice(0, 6);
+      .sort((a, b) => b.sold + b.stock - (a.sold + a.stock))
+      .slice(0, 8);
+
+    // Product breakdown (when a specific category is selected)
+    const categoryProductsChart = scopedProducts
+      .map((p) => ({
+        name: p.name.length > 18 ? `${p.name.slice(0, 17)}…` : p.name,
+        fullName: p.name,
+        stock: stockByProduct.get(p.id) ?? 0,
+        sold: soldUnitsByProduct.get(p.id) ?? 0,
+      }))
+      .sort((a, b) => b.sold + b.stock - (a.sold + a.stock))
+      .slice(0, 10);
 
     return {
-      totalProducts: products.length,
+      totalProducts: scopedProducts.length,
       inventoryValue,
       lowStockCount: lowStockProducts.length,
       nearExpiryCount: nearExpiryProductIds.size,
-      lowStockProducts,
-      assessments,
-      totalWasteAvoided,
       topCategories,
+      categoryProductsChart,
     };
-  }, [products, batches, salesSeries]);
-
-  const displayedSeries = range === '7d' ? salesSeries.slice(-7) : salesSeries;
+  }, [products, batches, scopedProducts, scopedBatches, sales]);
 
   const statCards = [
     {
       title: t('stats.totalProducts'),
       value: String(metrics.totalProducts),
-      delta: t('stats.deltaProducts'),
+      delta: selectedCategory === 'ALL' ? t('stats.deltaProducts') : `In ${selectedCategory}`,
       icon: Package,
       tint: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800/60',
     },
@@ -160,29 +197,68 @@ export function DashboardView() {
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Category Filter Selector */}
           <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-900 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-neutral-800 shadow-2xs text-xs font-medium text-gray-700 dark:text-gray-300">
-            <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <Filter className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <select
-              value={range}
-              onChange={(e) => setRange(e.target.value as '7d' | '14d')}
-              aria-label="Select date range"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              aria-label="Filter dashboard graph by category"
               className="bg-transparent focus:outline-hidden cursor-pointer font-medium"
             >
-              <option value="7d" className="dark:bg-neutral-900">
-                {t('charts.last7Days')}
+              <option value="ALL" className="dark:bg-neutral-900">
+                All Categories
               </option>
-              <option value="14d" className="dark:bg-neutral-900">
-                Last 14 Days
-              </option>
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat} className="dark:bg-neutral-900">
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
-          <Link href="/inventory">
+
+          <Link href="/billing">
             <Button size="sm" className="h-9 text-xs gap-1.5">
               <ShoppingCart className="w-3.5 h-3.5" />
-              <span>Quick POS / Intake</span>
+              <span>Open Billing</span>
+            </Button>
+          </Link>
+          <Link href="/inventory">
+            <Button size="sm" variant="outline" className="h-9 text-xs gap-1.5">
+              <Package className="w-3.5 h-3.5" />
+              <span>Inventory Intake</span>
             </Button>
           </Link>
         </div>
+      </div>
+
+      {/* Category Quick-Switch Bar */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <button
+          type="button"
+          onClick={() => setSelectedCategory('ALL')}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border whitespace-nowrap transition-colors ${
+            selectedCategory === 'ALL'
+              ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+              : 'bg-white dark:bg-neutral-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-neutral-800 hover:border-emerald-300'
+          }`}
+        >
+          All Categories
+        </button>
+        {availableCategories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border whitespace-nowrap transition-colors ${
+              selectedCategory === cat
+                ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
+                : 'bg-white dark:bg-neutral-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-neutral-800 hover:border-sky-300'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
       </div>
 
       {/* Four Stat Cards */}
@@ -218,92 +294,170 @@ export function DashboardView() {
         })}
       </div>
 
-      {/* Charts Row: Sales Trend & Top-Selling Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Sales Trend Area Chart */}
-        <div className="bg-white dark:bg-neutral-900 rounded-card p-5 border border-surface-border dark:border-neutral-800 shadow-card">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
-                {t('charts.salesTrend')}
-              </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Daily store revenue ({range === '7d' ? '7 days' : '14 days'})
-              </p>
-            </div>
-            <Badge variant="healthy">{offers.filter((o) => o.status === 'PUBLISHED').length} Active Offers</Badge>
+      {/* Category / Product Breakdown Graph (Updates Dynamically on Category Selection) */}
+      <div className="bg-white dark:bg-neutral-900 rounded-card p-5 border border-surface-border dark:border-neutral-800 shadow-card">
+        <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              {selectedCategory === 'ALL'
+                ? t('charts.topCategories')
+                : `${selectedCategory} — Product Breakdown`}
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {selectedCategory === 'ALL'
+                ? 'Click any category pill or bar to inspect products in that category'
+                : `Units sold vs stock on hand in ${selectedCategory}`}
+            </p>
           </div>
-
-          <div className="h-60 w-full" aria-label="Sales Trend Area Chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={displayedSeries} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#16A34A" stopOpacity={0.28} />
-                    <stop offset="95%" stopColor="#16A34A" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
-                <YAxis
-                  tick={{ fontSize: 11, fill: '#6B7280' }}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={(v) => `₹${Math.round(v / 1000)}k`}
-                />
-                <Tooltip
-                  formatter={(value) => [formatINR(Number(value), intlLocale), 'Revenue']}
-                  contentStyle={{ borderRadius: '10px', borderColor: '#E5E7EB', fontSize: '12px' }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#16A34A"
-                  strokeWidth={2.5}
-                  fillOpacity={1}
-                  fill="url(#revGrad)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Top-selling Product Categories Bar Chart */}
-        <div className="bg-white dark:bg-neutral-900 rounded-card p-5 border border-surface-border dark:border-neutral-800 shadow-card">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
-                {t('charts.topCategories')}
-              </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Weekly units sold across categories
-              </p>
-            </div>
+          {selectedCategory !== 'ALL' ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs gap-1 text-sky-600 dark:text-sky-400"
+              onClick={() => setSelectedCategory('ALL')}
+            >
+              <RotateCcw className="w-3 h-3" />
+              All Categories
+            </Button>
+          ) : (
             <Link
               href="/reports"
               className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
             >
-              Reports →
+              View Sales Trend in Reports →
             </Link>
-          </div>
+          )}
+        </div>
 
-          <div className="h-60 w-full" aria-label="Top-selling Product Categories Bar Chart">
+        <div
+          className="h-72 w-full"
+          aria-label={
+            selectedCategory === 'ALL'
+              ? 'Top-selling Product Categories Bar Chart'
+              : `${selectedCategory} Products Bar Chart`
+          }
+        >
+          {selectedCategory === 'ALL' ? (
+            metrics.topCategories.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center text-xs text-gray-500 dark:text-gray-400 border border-dashed border-gray-200 dark:border-neutral-800 rounded-xl p-4">
+                <p className="font-medium text-gray-700 dark:text-gray-300">
+                  No inventory categories yet
+                </p>
+                <p className="mt-1">Add products in Inventory to see category performance.</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={metrics.topCategories}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+                  <XAxis
+                    dataKey="category"
+                    tick={{ fontSize: 11, fill: '#6B7280' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11, fill: '#6B7280' }}
+                    axisLine={false}
+                    tickLine={false}
+                    allowDecimals={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '10px',
+                      borderColor: '#E5E7EB',
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: '11px' }} />
+                  <Bar
+                    dataKey="sold"
+                    name="Units Sold"
+                    fill="#16A34A"
+                    radius={[6, 6, 0, 0]}
+                    maxBarSize={38}
+                    className="cursor-pointer"
+                    onClick={(barData: any) => {
+                      if (barData?.fullCategory) {
+                        setSelectedCategory(barData.fullCategory);
+                      }
+                    }}
+                  />
+                  <Bar
+                    dataKey="stock"
+                    name="In Stock"
+                    fill="#94A3B8"
+                    radius={[6, 6, 0, 0]}
+                    maxBarSize={38}
+                    className="cursor-pointer"
+                    onClick={(barData: any) => {
+                      if (barData?.fullCategory) {
+                        setSelectedCategory(barData.fullCategory);
+                      }
+                    }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )
+          ) : metrics.categoryProductsChart.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center text-xs text-gray-500 dark:text-gray-400 border border-dashed border-gray-200 dark:border-neutral-800 rounded-xl p-4">
+              <p className="font-medium text-gray-700 dark:text-gray-300">
+                No products in {selectedCategory} yet
+              </p>
+              <p className="mt-1">
+                Add items under {selectedCategory} in Inventory to see their breakdown here.
+              </p>
+            </div>
+          ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={metrics.topCategories} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+              <BarChart
+                data={metrics.categoryProductsChart}
+                margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-                <XAxis dataKey="category" tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  formatter={(value) => [`${value} units`, 'Weekly Sold']}
-                  contentStyle={{ borderRadius: '10px', borderColor: '#E5E7EB', fontSize: '12px' }}
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 11, fill: '#6B7280' }}
+                  axisLine={false}
+                  tickLine={false}
                 />
-                <Bar dataKey="units" fill="#16A34A" radius={[6, 6, 0, 0]} maxBarSize={42} />
+                <YAxis
+                  tick={{ fontSize: 11, fill: '#6B7280' }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip
+                  labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName ?? ''}
+                  contentStyle={{
+                    borderRadius: '10px',
+                    borderColor: '#E5E7EB',
+                    fontSize: '12px',
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                <Bar
+                  dataKey="sold"
+                  name="Units Sold"
+                  fill="#0284C7"
+                  radius={[6, 6, 0, 0]}
+                  maxBarSize={38}
+                />
+                <Bar
+                  dataKey="stock"
+                  name="Stock On Hand"
+                  fill="#10B981"
+                  radius={[6, 6, 0, 0]}
+                  maxBarSize={38}
+                />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-

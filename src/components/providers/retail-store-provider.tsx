@@ -7,10 +7,13 @@ import {
   addDaysIso,
   computeWithdrawAt,
   deductStockFEFO,
+  upsertDailySalesSeries,
 } from '@/lib/retail-rules';
 import {
   ActivityEvent,
+  ArchivedReport,
   Batch,
+  Bill,
   DailySalesPoint,
   Offer,
   Product,
@@ -28,6 +31,8 @@ interface RetailStoreState {
   products: Product[];
   batches: Batch[];
   sales: Sale[];
+  bills: Bill[];
+  archivedReports: ArchivedReport[];
   offers: Offer[];
   reservations: Reservation[];
   recommendations: Recommendation[];
@@ -71,10 +76,22 @@ interface CreateOfferInput {
   recommendedByAi?: boolean;
 }
 
+interface CommitBillPayload {
+  bill: Bill;
+  sale: Sale;
+  updatedBatches: Batch[];
+  updatedProducts: Product[];
+}
+
 interface RetailStoreContextValue extends RetailStoreState {
   isHydrated: boolean;
   addProductWithBatch: (product: NewProductInput, batch: NewBatchInput) => Product;
   addBatchToProduct: (productId: string, batch: NewBatchInput) => Batch;
+  commitGeneratedBill: (payload: CommitBillPayload) => { ok: boolean; duplicate?: boolean };
+  markBillPaid: (billId: string) => void;
+  archiveRecordsToReport: (
+    mode: 'OLDER_THAN_7D' | 'ALL_CURRENT'
+  ) => { ok: boolean; error?: string; report?: ArchivedReport };
   recordSaleFEFO: (
     productId: string,
     qty: number,
@@ -130,7 +147,14 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
       if (saved) {
         const parsed = JSON.parse(saved) as Partial<RetailStoreState>;
         if (Array.isArray(parsed.products) && Array.isArray(parsed.batches) && parsed.shop) {
-          setState((prev) => ({ ...prev, ...parsed }));
+          setState((prev) => ({
+            ...prev,
+            ...parsed,
+            bills: Array.isArray(parsed.bills) ? parsed.bills : prev.bills,
+            archivedReports: Array.isArray(parsed.archivedReports)
+              ? parsed.archivedReports
+              : prev.archivedReports,
+          }));
         }
       }
     } catch {
@@ -286,10 +310,148 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
       ...prev,
       batches: fefo.updatedBatches,
       sales: [sale, ...prev.sales],
+      salesSeries: upsertDailySalesSeries(prev.salesSeries, total, qty),
       activities: [act, ...prev.activities.slice(0, 14)],
     }));
 
     return { ok: true, sale };
+  };
+
+  const commitGeneratedBill = (payload: CommitBillPayload) => {
+    const { bill, sale, updatedBatches, updatedProducts } = payload;
+    // Duplicate guard: never commit the same bill or idempotencyKey twice
+    const alreadyExists = state.bills.some(
+      (b) => b.id === bill.id || b.idempotencyKey === bill.idempotencyKey
+    );
+    if (alreadyExists) {
+      return { ok: true, duplicate: true };
+    }
+
+    const totalUnits = bill.items.reduce((sum, it) => sum + it.qty, 0);
+    const act: ActivityEvent = {
+      id: `act-${Date.now()}`,
+      shopId: PRIMARY_SHOP_ID,
+      type: 'sale',
+      message: `Invoice ${bill.invoiceNumber}: ${bill.items.length} item(s), ${totalUnits} units (₹${bill.grandTotal})`,
+      timestamp: 'Just now',
+    };
+
+    setState((prev) => {
+      if (
+        prev.bills.some((b) => b.id === bill.id || b.idempotencyKey === bill.idempotencyKey)
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        batches: updatedBatches,
+        products: updatedProducts,
+        bills: [bill, ...prev.bills],
+        sales: [sale, ...prev.sales],
+        salesSeries: upsertDailySalesSeries(prev.salesSeries, bill.grandTotal, totalUnits),
+        activities: [act, ...prev.activities.slice(0, 14)],
+      };
+    });
+
+    return { ok: true, duplicate: false };
+  };
+
+  const markBillPaid = (billId: string) => {
+    setState((prev) => ({
+      ...prev,
+      bills: prev.bills.map((b) =>
+        b.id === billId ? { ...b, paymentStatus: 'PAID' as const } : b
+      ),
+    }));
+  };
+
+  const archiveRecordsToReport = (
+    mode: 'OLDER_THAN_7D' | 'ALL_CURRENT'
+  ): { ok: boolean; error?: string; report?: ArchivedReport } => {
+    const now = new Date();
+    const cutoffIso = addDaysIso(now, -7);
+    const cutoffMs = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+
+    const targetSales =
+      mode === 'OLDER_THAN_7D'
+        ? state.sales.filter((s) => new Date(s.createdAt).getTime() < cutoffMs)
+        : state.sales;
+
+    const targetSeries =
+      mode === 'OLDER_THAN_7D'
+        ? state.salesSeries.filter((pt) => pt.date < cutoffIso)
+        : state.salesSeries;
+
+    if (targetSales.length === 0 && targetSeries.length === 0) {
+      return {
+        ok: false,
+        error:
+          mode === 'OLDER_THAN_7D'
+            ? 'No records older than 7 days found to archive.'
+            : 'No active records available to compile into a report.',
+      };
+    }
+
+    const totalRevenue =
+      targetSales.length > 0
+        ? Math.round(targetSales.reduce((s, sale) => s + sale.total, 0) * 100) / 100
+        : Math.round(targetSeries.reduce((s, pt) => s + pt.revenue, 0) * 100) / 100;
+
+    const totalUnits =
+      targetSales.length > 0
+        ? targetSales.reduce(
+            (s, sale) => s + sale.items.reduce((sum, it) => sum + it.qty, 0),
+            0
+          )
+        : targetSeries.reduce((s, pt) => s + pt.units, 0);
+
+    const wasteAvoided =
+      Math.round(targetSeries.reduce((s, pt) => s + pt.wasteAvoided, 0) * 100) / 100;
+
+    const dates = [
+      ...targetSales.map((s) => s.createdAt.slice(0, 10)),
+      ...targetSeries.map((pt) => pt.date),
+    ]
+      .filter(Boolean)
+      .sort();
+
+    const periodStart = dates[0] ?? addDaysIso(now, 0);
+    const periodEnd = dates[dates.length - 1] ?? addDaysIso(now, 0);
+    const dateStamp = addDaysIso(now, 0).replace(/-/g, '');
+    const seq = String(state.archivedReports.length + 1).padStart(2, '0');
+
+    const report: ArchivedReport = {
+      id: `rpt-${now.getTime()}`,
+      reportCode: `RPT-${dateStamp}-${seq}`,
+      periodStart,
+      periodEnd,
+      transactionCount: targetSales.length,
+      totalUnits,
+      totalRevenue,
+      wasteAvoided,
+      createdAt: now.toISOString(),
+    };
+
+    const targetSaleIds = new Set(targetSales.map((s) => s.id));
+    const targetSeriesDates = new Set(targetSeries.map((pt) => pt.date));
+
+    const act: ActivityEvent = {
+      id: `act-${now.getTime()}`,
+      shopId: PRIMARY_SHOP_ID,
+      type: 'sale',
+      message: `Compiled report ${report.reportCode} (${report.transactionCount} txns, ₹${report.totalRevenue}) into Total Records`,
+      timestamp: 'Just now',
+    };
+
+    setState((prev) => ({
+      ...prev,
+      sales: prev.sales.filter((s) => !targetSaleIds.has(s.id)),
+      salesSeries: prev.salesSeries.filter((pt) => !targetSeriesDates.has(pt.date)),
+      archivedReports: [report, ...prev.archivedReports],
+      activities: [act, ...prev.activities.slice(0, 14)],
+    }));
+
+    return { ok: true, report };
   };
 
   const updateRecommendationStatus = (
@@ -500,6 +662,15 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
       ...prev,
       batches: updatedBatches,
       sales: newSales,
+      salesSeries:
+        res.shopId === PRIMARY_SHOP_ID
+          ? upsertDailySalesSeries(
+              prev.salesSeries,
+              res.qty * res.offerPrice,
+              res.qty,
+              res.qty * res.offerPrice
+            )
+          : prev.salesSeries,
       reservations: prev.reservations.map((r) =>
         r.id === res.id ? { ...r, status: 'COLLECTED' } : r
       ),
@@ -568,6 +739,9 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
         isHydrated,
         addProductWithBatch,
         addBatchToProduct,
+        commitGeneratedBill,
+        markBillPaid,
+        archiveRecordsToReport,
         recordSaleFEFO,
         updateRecommendationStatus,
         createOffer,

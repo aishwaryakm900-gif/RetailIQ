@@ -65,10 +65,58 @@ export interface Sale {
   shopId: string;
   customerId?: string;
   customerName?: string;
+  invoiceNumber?: string;
   total: number;
-  source: 'POS' | 'RESERVATION';
+  source: 'POS' | 'RESERVATION' | 'BILLING';
   createdAt: string;
   items: SaleItem[];
+}
+
+export type PaymentMethod = 'CASH' | 'UPI' | 'CARD';
+export type PaymentStatus = 'PAID' | 'PENDING';
+
+export interface BatchDeductionDetail {
+  batchId: string;
+  batchNo: string;
+  expiryDate: string;
+  qty: number;
+  costPrice: number;
+}
+
+export interface BillItem {
+  id: string;
+  billId: string;
+  productId: string;
+  productName: string;
+  sku: string;
+  barcode: string;
+  category: ProductCategory;
+  qty: number;
+  unitPrice: number;
+  subtotal: number;
+  batchDeductions: BatchDeductionDetail[];
+}
+
+export interface Bill {
+  id: string;
+  invoiceNumber: string;
+  idempotencyKey: string;
+  shopId: string;
+  shopName: string;
+  shopAddress: string;
+  shopPhone: string;
+  customerName?: string;
+  customerPhone?: string;
+  subtotal: number;
+  discountPct: number;
+  discountAmount: number;
+  taxAmount: number;
+  grandTotal: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  createdAt: string;
+  items: BillItem[];
+  saleId: string;
 }
 
 export interface Offer {
@@ -146,5 +194,17 @@ export interface DailySalesPoint {
   revenue: number;
   units: number;
   wasteAvoided: number;
+}
+
+export interface ArchivedReport {
+  id: string;
+  reportCode: string;
+  periodStart: string;
+  periodEnd: string;
+  transactionCount: number;
+  totalUnits: number;
+  totalRevenue: number;
+  wasteAvoided: number;
+  createdAt: string;
 }
 

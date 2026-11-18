@@ -157,7 +157,7 @@ export function InventoryView() {
             {tNav('inventory')} & Batches
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Track multi-batch stock levels, earliest expiry dates (FEFO), and rapid stock intake.
+            FEFO – First Expired, First Out: Products with the nearest expiry date are sold first to reduce product wastage.
           </p>
         </div>
 
@@ -224,20 +224,20 @@ export function InventoryView() {
             {stats.lowStockCount}
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            SKUs below minimum safety buffer
+            Products running low on stock
           </p>
         </div>
 
         <div className="bg-white dark:bg-neutral-900 rounded-card p-5 border border-surface-border dark:border-neutral-800 shadow-card">
           <div className="flex items-center justify-between text-xs font-medium text-gray-500 uppercase">
-            <span>Expiring &le; 7 Days</span>
+            <span>Expiry Risk (&le; 7 Days)</span>
             <ClockAlert className="w-4 h-4 text-red-600" />
           </div>
           <div className="text-2xl font-bold text-red-600 dark:text-red-400 mt-3 tabular-nums">
             {stats.expiringSoonBatches} batches
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Prioritized via FEFO deduction
+            Sold first using FEFO to avoid wastage
           </p>
         </div>
       </div>
@@ -323,17 +323,15 @@ export function InventoryView() {
               <tr className="border-b border-gray-100 dark:border-neutral-800 bg-gray-50/70 dark:bg-neutral-950/60 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 <th className="py-3 px-4">Product & SKU</th>
                 <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Stock / Min</th>
                 <th className="py-3 px-4">Earliest Expiry</th>
                 <th className="py-3 px-4">Buy / Sell</th>
                 <th className="py-3 px-4">Movement</th>
-                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-neutral-800 text-sm">
               {pagedRows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center">
+                  <td colSpan={5} className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center space-y-3 max-w-sm mx-auto">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                         <Package className="w-6 h-6" />
@@ -387,7 +385,8 @@ export function InventoryView() {
                   return (
                     <tr
                       key={product.id}
-                      className="hover:bg-gray-50/70 dark:hover:bg-neutral-800/40 transition-colors"
+                      onClick={() => setBatchModalProduct(product)}
+                      className="hover:bg-gray-50/70 dark:hover:bg-neutral-800/40 transition-colors cursor-pointer"
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
@@ -405,22 +404,6 @@ export function InventoryView() {
                       </td>
                       <td className="py-3 px-4 text-xs text-gray-600 dark:text-gray-300">
                         {product.category}
-                      </td>
-                      <td className="py-3 px-4 tabular-nums">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`font-bold ${
-                              onHand === 0
-                                ? 'text-red-600 dark:text-red-400'
-                                : isLow
-                                  ? 'text-amber-600 dark:text-amber-400'
-                                  : 'text-gray-900 dark:text-white'
-                            }`}
-                          >
-                            {onHand}
-                          </span>
-                          <span className="text-xs text-gray-400">/ {product.minStock} min</span>
-                        </div>
                       </td>
                       <td className="py-3 px-4">
                         {earliestBatch ? (
@@ -445,31 +428,19 @@ export function InventoryView() {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <Badge variant={moverVariant} className="capitalize">
+                        <Badge
+                          variant={moverVariant}
+                          className="capitalize"
+                          title={
+                            product.moverState === 'dead stock'
+                              ? 'Dead Stock: Identifies products that are not selling.'
+                              : product.moverState === 'near-expiry'
+                                ? 'Expiry Risk: Identifies products nearing their expiry date.'
+                                : 'Product sales movement status.'
+                          }
+                        >
                           {product.moverState}
                         </Badge>
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <div className="inline-flex items-center gap-1.5">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-7 px-2.5 text-xs"
-                            onClick={() => setBatchModalProduct(product)}
-                          >
-                            Batches
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            className="h-7 px-2.5 text-xs"
-                            disabled={onHand === 0}
-                            onClick={() => handleQuickSellOne(product)}
-                            title="Deduct 1 unit via FEFO"
-                          >
-                            -1 FEFO
-                          </Button>
-                        </div>
                       </td>
                     </tr>
                   );
