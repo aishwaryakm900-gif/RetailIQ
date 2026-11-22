@@ -46,44 +46,123 @@
     "greetingMorning": "ಶುಭೋದಯ, {name}!",
     "greetingAfternoon": "ಶುಭ ಮಧ್ಯಾಹ್ನ, {name}!",
     "greetingEvening": "ಶುಭ ಸಂಜೆ, {name}!",
-    "subtext": "ಇಲ್ಲಿ ನಿಮ್ಮ ಅಂಗಡಿಯ ಇಂದಿನ ದಾಸ್ತಾನು ವಿವರವಿದೆ.",
-    "stats": {
-      "totalProducts": "ಒಟ್ಟು ಉತ್ಪನ್ನಗಳು",
+    "subtext": "ನಿಮ್ಮ ಅಂಗಡಿಯ ಒಂದು ನೋಟ.",
+    "todayLabel": "ಇಂದು",
+    "filterLabel": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಅನ್ನು ವರ್ಗದ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ",
+    "allCategories": "ಎಲ್ಲಾ ವರ್ಗಗಳು",
+    "kpi": {
       "inventoryValue": "ದಾಸ್ತಾನು ಮೌಲ್ಯ",
-      "lowStockItems": "ಕಡಿಮೆ ಇರುವ ವಸ್ತುಗಳು",
-      "nearExpiryProducts": "ಅವಧಿ ಮುಗಿಯುತ್ತಿರುವ ವಸ್ತುಗಳು",
-      "deltaProducts": "ಕಳೆದ ತಿಂಗಳಿಗಿಂತ +12%",
-      "deltaValue": "ಪ್ರಸ್ತುತ ಖರೀದಿ ದರ ಆಧರಿಸಿ",
-      "deltaLowStock": "ತಕ್ಷಣ ಮರುಖರೀದಿ ಅಗತ್ಯವಿದೆ",
-      "deltaNearExpiry": "7 ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯವಾಗಲಿದೆ"
+      "inventoryValueHint": "ಖರೀದಿ ದರದಲ್ಲಿ",
+      "totalProducts": "ಒಟ್ಟು ಉತ್ಪನ್ನಗಳು",
+      "totalProductsHint": "ಸಕ್ರಿಯ ಉತ್ಪನ್ನಗಳು",
+      "lowStock": "ಕಡಿಮೆ ಸ್ಟಾಕ್",
+      "lowStockHint": "ಕನಿಷ್ಠಕ್ಕಿಂತ ಕಡಿಮೆ",
+      "lowStockOutHint": "{count} ಸ್ಟಾಕ್ ಖಾಲಿ",
+      "expiring": "ಅವಧಿ ಮುಗಿಯುತ್ತಿದೆ",
+      "expiringHint": "ಮುಂದಿನ 7 ದಿನಗಳಲ್ಲಿ",
+      "expiringCriticalHint": "{count} ತುರ್ತು"
     },
-    "healthScore": {
-      "title": "ಅಂಗಡಿ ಆರೋಗ್ಯ ಸೂಚ್ಯಂಕ",
-      "score": "88/100",
-      "lossAvoided": "ತಪ್ಪಿಸಿದ ನಷ್ಟ",
-      "biggestOpportunity": "ಈ ವಾರದ ದೊಡ್ಡ ಅವಕಾಶ",
-      "opportunityText": "ಗುರುವಾರದೊಳಗೆ 14 ಬ್ರೌನ್ ಬ್ರೆಡ್ ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಮಾರಿ ₹420 ನಷ್ಟ ತಪ್ಪಿಸಿ."
+    "attention": {
+      "title": "ಆದ್ಯತೆಯ ಗಮನ",
+      "subtitle": "ಕ್ರಮ ಅಗತ್ಯವಿರುವ ಉತ್ಪನ್ನಗಳು, ಅತ್ಯಂತ ತುರ್ತು ಮೊದಲು",
+      "allClear": "ಎಲ್ಲವೂ ಸರಿಯಾಗಿದೆ",
+      "urgentCount": "{count} ತುರ್ತು",
+      "reviewCount": "{count} ಗಮನಿಸಿ",
+      "urgentReview": "{urgent} ತುರ್ತು · {review} ಗಮನಿಸಿ",
+      "emptyTitle": "ತುರ್ತು ಸಮಸ್ಯೆಗಳಿಲ್ಲ",
+      "emptyDescription": "ಮುಂದಿನ 7 ದಿನಗಳವರೆಗೆ ಸ್ಟಾಕ್ ಮತ್ತು ಅವಧಿ ಸರಿಯಾಗಿದೆ.",
+      "columnProduct": "ಉತ್ಪನ್ನ",
+      "columnIssue": "ಸಮಸ್ಯೆ",
+      "columnStatus": "ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ",
+      "columnAction": "ಕ್ರಮ",
+      "more": "+{count} ಇನ್ನಷ್ಟು {count, plural, one {ವಸ್ತುವಿಗೆ} other {ವಸ್ತುಗಳಿಗೆ}} ಗಮನ ಬೇಕು",
+      "issueExpired": "ಅವಧಿ ಮುಗಿದಿದೆ",
+      "issueOutOfStock": "ಸ್ಟಾಕ್ ಖಾಲಿ",
+      "issueLowStock": "ಕಡಿಮೆ ಸ್ಟಾಕ್",
+      "issueReorder": "ಶೀಘ್ರ ಮರುಖರೀದಿ",
+      "issueExpiring": "ಅವಧಿ ಮುಗಿಯುತ್ತಿದೆ",
+      "issueExpiringToday": "ಇಂದು ಮುಕ್ತಾಯ",
+      "issueExpiringTomorrow": "ನಾಳೆ ಮುಕ್ತಾಯ",
+      "issueOverstock": "ಹೆಚ್ಚುವರಿ ಸ್ಟಾಕ್",
+      "detailStock": "{stock} ಉಳಿದಿದೆ · ಕನಿಷ್ಠ {min}",
+      "detailReorder": "{stock} ಉಳಿದಿದೆ · ಮರುಖರೀದಿ {reorder}",
+      "detailExpiry": "{qty} ಘಟಕಗಳು · {days, plural, one {# ದಿನದಲ್ಲಿ} other {# ದಿನಗಳಲ್ಲಿ}} ಮುಕ್ತಾಯ",
+      "detailExpiryToday": "{qty} ಘಟಕಗಳು · ಇಂದು ಮುಕ್ತಾಯ",
+      "detailExpiryTomorrow": "{qty} ಘಟಕಗಳು · ನಾಳೆ ಮುಕ್ತಾಯ",
+      "detailExpired": "{qty} ಘಟಕಗಳು · {days, plural, one {# ದಿನದ ಹಿಂದೆ} other {# ದಿನಗಳ ಹಿಂದೆ}} ಮುಕ್ತಾಯ",
+      "detailOverstock": "{stock} ಘಟಕಗಳು · ಕನಿಷ್ಠದ {multiple}×",
+      "actionRestock": "ಮರುಖರೀದಿಸಿ",
+      "actionReviewExpiry": "ಅವಧಿ ನೋಡಿ",
+      "actionCreateOffer": "ಆಫರ್ ರಚಿಸಿ"
     },
-    "charts": {
-      "salesTrend": "ಮಾರಾಟದ ಪ್ರವೃತ್ತಿ",
-      "last7Days": "ಕಳೆದ 7 ದಿನಗಳು",
-      "topCategories": "ಹೆಚ್ಚು ಮಾರಾಟವಾಗುವ ವರ್ಗಗಳು"
+    "sales": {
+      "title": "ಮಾರಾಟ ಕಾರ್ಯಕ್ಷಮತೆ",
+      "subtitle": "ಕಳೆದ 7 ದಿನಗಳು",
+      "revenue": "ಮಾರಾಟ",
+      "units": "ಮಾರಾಟವಾದ ಘಟಕಗಳು",
+      "vsPrevious": "ಹಿಂದಿನ 7 ದಿನಗಳಿಗೆ ಹೋಲಿಸಿದರೆ",
+      "noPrior": "ಹೋಲಿಕೆಗೆ ಹಿಂದಿನ ವಾರ ಇಲ್ಲ",
+      "up": "{percent}% ಹೆಚ್ಚಳ",
+      "down": "{percent}% ಇಳಿಕೆ",
+      "flat": "ಸ್ಥಿರ",
+      "emptyTitle": "ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ ಮಾರಾಟ ಇಲ್ಲ",
+      "emptyDescription": "ಸಾಪ್ತಾಹಿಕ ಮಾರಾಟ ಪ್ರವೃತ್ತಿ ನೋಡಲು ಬಿಲ್ ರಚಿಸಿ.",
+      "emptyAction": "ಬಿಲ್ ರಚಿಸಿ",
+      "chartLabel": "ಸಾಪ್ತಾಹಿಕ ಮಾರಾಟ ಚಾರ್ಟ್",
+      "tooltipRevenue": "ಮಾರಾಟ",
+      "tooltipUnits": "ಘಟಕಗಳು"
     },
-    "needsAttention": {
-      "title": "ಗಮನ ಹರಿಸಬೇಕಾದ ವಸ್ತುಗಳು",
-      "expiresInDays": "{days} ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯವಾಗುತ್ತದೆ"
+    "insights": {
+      "title": "AI ವ್ಯಾಪಾರ ಒಳನೋಟಗಳು",
+      "subtitle": "ನಿಮ್ಮ ಮಾರಾಟ ಮತ್ತು ಸ್ಟಾಕ್ ಆಧಾರಿತ",
+      "momentumTitle": "ಮಾರಾಟದ ವೇಗ",
+      "momentumUp": "ಹಿಂದಿನ 7 ದಿನಗಳಿಗೆ ಹೋಲಿಸಿದರೆ ಮಾರಾಟ {percent}% ಹೆಚ್ಚಾಗಿದೆ.",
+      "momentumDown": "ಹಿಂದಿನ 7 ದಿನಗಳಿಗೆ ಹೋಲಿಸಿದರೆ ಮಾರಾಟ {percent}% ಕಡಿಮೆಯಾಗಿದೆ.",
+      "momentumFlat": "ಹಿಂದಿನ 7 ದಿನಗಳಿಗೆ ಹೋಲಿಸಿದರೆ ಮಾರಾಟ ಸ್ಥಿರವಾಗಿದೆ.",
+      "momentumNoPrior": "ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ {revenue} ಮಾರಾಟವಾಗಿದೆ. ಸಾಪ್ತಾಹಿಕ ಪ್ರವೃತ್ತಿಗಾಗಿ ಬಿಲ್ಲಿಂಗ್ ಮುಂದುವರಿಸಿ.",
+      "momentumNoSales": "ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ ಮಾರಾಟ ಇಲ್ಲ. ವೇಗ ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ಬಿಲ್ ರಚಿಸಿ.",
+      "categoryTitle": "ದಾಸ್ತಾನು ಕೇಂದ್ರೀಕರಣ",
+      "categoryShare": "{category} ನಿಮ್ಮ ದಾಸ್ತಾನು ಮೌಲ್ಯದ {percent}% ({value}).",
+      "categorySpread": "ನಿಮ್ಮ ದಾಸ್ತಾನು {count, plural, one {# ವರ್ಗದಲ್ಲಿ} other {# ವರ್ಗಗಳಲ್ಲಿ}} ಹರಡಿದೆ. {category} ಅತಿದೊಡ್ಡದು ({percent}%).",
+      "categoryConcentrated": "{category} ನಿಮ್ಮ ದಾಸ್ತಾನು ಮೌಲ್ಯದ {percent}% ({value}). ಒಂದೇ ವರ್ಗದಲ್ಲಿ ಹೆಚ್ಚು ಹಣ ಕಟ್ಟಿಕೊಳ್ಳಬೇಡಿ.",
+      "cashTitle": "ಸಿಲುಕಿರುವ ಹಣ",
+      "cashSlow": "ಈ ವಾರ ಮಾರಾಟವಾಗದ ಉತ್ಪನ್ನಗಳಲ್ಲಿ {value} ಸಿಲುಕಿದೆ.",
+      "cashClear": "ಈ ವಾರ ಪ್ರತಿ ಸ್ಟಾಕ್ ಉತ್ಪನ್ನವೂ ಒಮ್ಮೆಯಾದರೂ ಮಾರಾಟವಾಗಿದೆ."
     },
-    "aiInsight": {
-      "title": "ಎಐ ಬೇಡಿಕೆ ಮಾಹಿತಿ",
-      "description": "ವಾರಾಂತ್ಯದಲ್ಲಿ ಹಬ್ಬದ ಕಾರಣ ಪಾನೀಯಗಳ ಬೇಡಿಕೆ ಹೆಚ್ಚಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ.",
-      "action": "ಮರುಖರೀದಿಸಿ"
+    "inventory": {
+      "title": "ದಾಸ್ತಾನು ಒಳನೋಟಗಳು",
+      "subtitle": "ಸ್ಟಾಕ್ ಮಿಶ್ರಣ, ವೇಗ ಮತ್ತು ನಿಧಾನ ಮಾರಾಟದ ಉತ್ಪನ್ನಗಳು",
+      "distributionTitle": "ಸ್ಟಾಕ್ ಹಂಚಿಕೆ",
+      "distributionSubtitle": "ವರ್ಗದ ಪ್ರಕಾರ ಘಟಕಗಳು",
+      "categoryDistributionTitle": "{category} ನಲ್ಲಿ ಸ್ಟಾಕ್",
+      "categoryDistributionSubtitle": "ಉತ್ಪನ್ನದ ಪ್ರಕಾರ ಘಟಕಗಳು",
+      "distributionEmptyTitle": "ಸ್ಟಾಕ್ ಇಲ್ಲ",
+      "distributionEmptyDescription": "ಸ್ಟಾಕ್ ಮಿಶ್ರಣ ನೋಡಲು ಉತ್ಪನ್ನ ಮತ್ತು ಬ್ಯಾಚ್ ಸೇರಿಸಿ.",
+      "fastTitle": "ವೇಗವಾಗಿ ಮಾರಾಟ",
+      "fastSubtitle": "ಈ ವಾರದ ಟಾಪ್ ಮಾರಾಟ",
+      "fastEmpty": "ಈ ವಾರ ಇನ್ನೂ ಮಾರಾಟ ಇಲ್ಲ.",
+      "fastUnits": "{count, plural, one {# ಘಟಕ} other {# ಘಟಕಗಳು}}",
+      "slowTitle": "ನಿಧಾನ ಮಾರಾಟ",
+      "slowSubtitle": "ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ ಮಾರಾಟ ಇಲ್ಲ",
+      "slowNoSales": "ಮೊದಲ ಬಿಲ್ ನಂತರ ಮಾರಾಟ ಇತಿಹಾಸ ಕಾಣುತ್ತದೆ.",
+      "slowEmpty": "ಈ ವಾರ ನಿಧಾನ ಸ್ಟಾಕ್ ಇಲ್ಲ.",
+      "slowStock": "{count} ಸ್ಟಾಕ್‌ನಲ್ಲಿ",
+      "slowValue": "{value} ಸಿಲುಕಿದೆ",
+      "unitsLabel": "ಘಟಕಗಳು",
+      "tooltipValue": "ದಾಸ್ತಾನು ಮೌಲ್ಯ",
+      "chartLabel": "ವರ್ಗದ ಪ್ರಕಾರ ಸ್ಟಾಕ್ ಹಂಚಿಕೆ"
     },
-    "recentActivity": {
-      "title": "ಇತ್ತೀಚಿನ ಚಟುವಟಿಕೆಗಳು",
-      "stockUpdated": "ಪಾರ್ಲೆ-ಜಿ ಬಿಸ್ಕತ್ ದಾಸ್ತಾನು ನವೀಕರಿಸಲಾಗಿದೆ",
-      "newProductAdded": "ಹೊಸ ವಸ್ತು ಸೇರಿಸಲಾಗಿದೆ: ಆಶೀರ್ವಾದ್ ಆಟಾ 5kg",
-      "expiryAlert": "ಅವಧಿ ಮುಕ್ತಾಯ ಎಚ್ಚರಿಕೆ: ಅಮೂಲ್ ಬೆಣ್ಣೆ (3 ಪ್ಯಾಕೆಟ್)",
-      "lowStockAlert": "ಕಡಿಮೆ ಸ್ಟಾಕ್ ಎಚ್ಚರಿಕೆ: ಫಾರ್ಚೂನ್ ಎಣ್ಣೆ"
+    "empty": {
+      "title": "ನಿಮ್ಮ ಅಂಗಡಿ ಸಿದ್ಧಪಡಿಸಿ",
+      "description": "ಸ್ಟಾಕ್, ಮಾರಾಟ ಮತ್ತು ಅವಧಿಯನ್ನು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ಮೊದಲ ಉತ್ಪನ್ನ ಸೇರಿಸಿ.",
+      "addFirst": "ಮೊದಲ ಉತ್ಪನ್ನ ಸೇರಿಸಿ",
+      "scanPack": "ಪ್ಯಾಕ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+      "step1Title": "ಉತ್ಪನ್ನ ಸೇರಿಸಿ",
+      "step1Desc": "ಉತ್ಪನ್ನ ಮತ್ತು ಅದರ ಮೊದಲ ಬ್ಯಾಚ್ ರಚಿಸಿ.",
+      "step2Title": "ಬಿಲ್ ರಚಿಸಿ",
+      "step2Desc": "ಮಾರಾಟದಿಂದ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ತಾನಾಗಿ ನವೀಕರಣವಾಗುತ್ತದೆ.",
+      "step3Title": "ಒಳನೋಟ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+      "step3Desc": "ಸ್ಟಾಕ್, ಅವಧಿ ಮತ್ತು ಬೇಡಿಕೆ ಪ್ರವೃತ್ತಿ ನೋಡಿ."
     }
   },
   "inventory": {
@@ -291,4 +370,3 @@
     "rights": "ಎಲ್ಲ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ. ಭಾರತೀಯ ಚಿಲ್ಲರೆ ವ್ಯಾಪಾರಿಗಳಿಗಾಗಿ ರೂಪಿಸಲಾಗಿದೆ."
   }
 }
-

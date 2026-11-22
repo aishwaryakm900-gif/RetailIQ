@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ProductCategory } from '@/lib/retail-config';
 import { buildSeedData, PRIMARY_SHOP_ID } from '@/lib/retail-seed';
+import { resolveProductImage } from '@/lib/retail-images';
 import {
   addDaysIso,
   computeWithdrawAt,
@@ -54,6 +55,7 @@ interface NewProductInput {
   minStock: number;
   supplierId: string;
   shelfLifeDays: number;
+  imageUrl?: string;
 }
 
 interface NewBatchInput {
@@ -87,6 +89,7 @@ interface RetailStoreContextValue extends RetailStoreState {
   isHydrated: boolean;
   addProductWithBatch: (product: NewProductInput, batch: NewBatchInput) => Product;
   addBatchToProduct: (productId: string, batch: NewBatchInput) => Batch;
+  deleteProduct: (productId: string) => { ok: boolean; error?: string; product?: Product };
   commitGeneratedBill: (payload: CommitBillPayload) => { ok: boolean; duplicate?: boolean };
   markBillPaid: (billId: string) => void;
   archiveRecordsToReport: (
@@ -205,6 +208,7 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
       dailyDemandAvg: 2.0,
       moverState: 'fresh',
       imageEmoji: categoryEmojis[productInput.category] || '📦',
+      imageUrl: productInput.imageUrl || resolveProductImage(productInput.name, productInput.category),
     };
 
     const newBatch: Batch = {
@@ -267,6 +271,36 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
     });
 
     return newBatch;
+  };
+
+  const deleteProduct = (productId: string): { ok: boolean; error?: string; product?: Product } => {
+    const prod = state.products.find((p) => p.id === productId);
+    if (!prod) {
+      return { ok: false, error: 'Product not found in catalogue' };
+    }
+
+    const deletedBatches = state.batches.filter((b) => b.productId === productId);
+    const deletedBatchIds = new Set(deletedBatches.map((b) => b.id));
+
+    const act: ActivityEvent = {
+      id: `act-${Date.now()}`,
+      shopId: PRIMARY_SHOP_ID,
+      type: 'product',
+      message: `Deleted "${prod.name}" and removed ${deletedBatches.length} batch(es) from inventory`,
+      timestamp: 'Just now',
+    };
+
+    setState((prev) => ({
+      ...prev,
+      products: prev.products.filter((p) => p.id !== productId),
+      batches: prev.batches.filter((b) => b.productId !== productId),
+      offers: prev.offers.filter((o) => !deletedBatchIds.has(o.batchId)),
+      reservations: prev.reservations.filter((r) => !deletedBatchIds.has(r.offerId)),
+      recommendations: prev.recommendations.filter((rec) => rec.productId !== productId),
+      activities: [act, ...prev.activities.slice(0, 14)],
+    }));
+
+    return { ok: true, product: prod };
   };
 
   const recordSaleFEFO = (
@@ -739,6 +773,7 @@ export function RetailStoreProvider({ children }: { children: React.ReactNode })
         isHydrated,
         addProductWithBatch,
         addBatchToProduct,
+        deleteProduct,
         commitGeneratedBill,
         markBillPaid,
         archiveRecordsToReport,

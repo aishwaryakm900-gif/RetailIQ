@@ -57,15 +57,18 @@ export function ThemeToggle({ showLabels = false }: { showLabels?: boolean }) {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-gray-200 dark:hover:border-neutral-700"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-transparent p-2 text-gray-500 transition-colors hover:border-gray-200 hover:bg-gray-100 hover:text-gray-800 dark:text-neutral-400 dark:hover:border-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-white"
       aria-label={t('toggle')}
       title={t('toggle')}
     >
       {resolvedTheme === 'dark' ? (
-        <Sun className="w-4 h-4 text-amber-400 transition-transform rotate-0 hover:rotate-90 duration-300" />
+        <Sun className="h-4 w-4 text-amber-400 transition-transform duration-300 rotate-0 hover:rotate-90" />
       ) : (
-        <Moon className="w-4 h-4 text-slate-700 transition-transform rotate-0 hover:-rotate-12 duration-300" />
+        <Moon className="h-4 w-4 text-slate-700 transition-transform duration-300 rotate-0 hover:-rotate-12" />
       )}
+      <span className="hidden text-xs font-semibold sm:inline">
+        {resolvedTheme === 'dark' ? t('dark') : t('light')}
+      </span>
     </button>
   );
 }

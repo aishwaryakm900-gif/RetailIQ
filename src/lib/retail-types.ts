@@ -39,6 +39,8 @@ export interface Product {
   dailyDemandAvg: number; // Derived from 90-day series
   moverState: 'fresh' | 'normal' | 'slow-moving' | 'near-expiry' | 'dead stock';
   imageEmoji: string;
+  /** Optional product photography used by the catalogue cards. */
+  imageUrl?: string;
 }
 
 export interface Batch {

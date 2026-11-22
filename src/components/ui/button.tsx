@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.98]',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.98] dark:focus-visible:ring-offset-neutral-950',
   {
     variants: {
       variant: {
@@ -12,13 +12,13 @@ const buttonVariants = cva(
         destructive:
           'bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-600',
         outline:
-          'border border-gray-200 bg-white shadow-sm hover:bg-gray-50 hover:text-gray-900',
+          'border border-gray-200 bg-white text-gray-700 shadow-sm hover:bg-gray-50 hover:text-gray-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800 dark:hover:text-white',
         secondary:
-          'bg-emerald-50 text-emerald-800 hover:bg-emerald-100',
+          'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900/60',
         ghost:
-          'hover:bg-gray-100 hover:text-gray-900',
+          'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white',
         link:
-          'text-emerald-600 underline-offset-4 hover:underline',
+          'text-emerald-600 underline-offset-4 hover:underline dark:text-emerald-400',
       },
       size: {
         default: 'h-10 px-4 py-2',
