@@ -45,10 +45,10 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
       />
 
       {/* Slide-over Panel */}
-      <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white h-full shadow-2xl animate-in slide-in-from-left duration-200">
+      <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white dark:bg-neutral-900 h-full shadow-2xl animate-in slide-in-from-left duration-200">
         <button
           onClick={onClose}
-          className="absolute right-3 top-4 p-2 text-gray-500 hover:text-gray-800 rounded-lg focus:outline-hidden"
+          className="absolute right-3 top-4 p-2 text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white rounded-lg focus:outline-hidden"
           aria-label="Close navigation"
         >
           <X className="w-5 h-5" />

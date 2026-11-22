@@ -46,44 +46,123 @@
     "greetingMorning": "सुप्रभात, {name}!",
     "greetingAfternoon": "नमस्कार, {name}!",
     "greetingEvening": "शुभ संध्या, {name}!",
-    "subtext": "यहाँ आपकी दुकान के स्टॉक का पूरा विवरण है।",
-    "stats": {
+    "subtext": "आपकी दुकान की एक नज़र में जानकारी।",
+    "todayLabel": "आज",
+    "filterLabel": "डैशबोर्ड को श्रेणी के अनुसार फ़िल्टर करें",
+    "allCategories": "सभी श्रेणियां",
+    "kpi": {
+      "inventoryValue": "स्टॉक का मूल्य",
+      "inventoryValueHint": "लागत मूल्य पर",
       "totalProducts": "कुल उत्पाद",
-      "inventoryValue": "स्टॉक का कुल मूल्य",
-      "lowStockItems": "कम स्टॉक वाले सामान",
-      "nearExpiryProducts": "जल्द एक्सपायर होने वाले सामान",
-      "deltaProducts": "पिछले महीने से +12%",
-      "deltaValue": "वर्तमान लागत मूल्य के आधार पर",
-      "deltaLowStock": "तुरंत ऑर्डर करने की जरूरत",
-      "deltaNearExpiry": "अगले 7 दिनों में एक्सपायर"
+      "totalProductsHint": "सक्रिय उत्पाद",
+      "lowStock": "कम स्टॉक",
+      "lowStockHint": "न्यूनतम से कम",
+      "lowStockOutHint": "{count} स्टॉक से बाहर",
+      "expiring": "जल्द एक्सपायर",
+      "expiringHint": "अगले 7 दिनों में",
+      "expiringCriticalHint": "{count} तत्काल"
     },
-    "healthScore": {
-      "title": "दुकान हेल्थ स्कोर",
-      "score": "88/100",
-      "lossAvoided": "बचाया गया नुकसान",
-      "biggestOpportunity": "इस हफ्ते का सबसे बड़ा अवसर",
-      "opportunityText": "गुरुवार से पहले ब्राउन ब्रेड के 14 पैकेट बेचकर ₹420 का नुकसान बचाएं।"
+    "attention": {
+      "title": "प्राथमिक ध्यान",
+      "subtitle": "जिन उत्पादों पर कार्रवाई जरूरी है, सबसे तत्काल पहले",
+      "allClear": "सब ठीक है",
+      "urgentCount": "{count} तत्काल",
+      "reviewCount": "{count} पर ध्यान दें",
+      "urgentReview": "{urgent} तत्काल · {review} पर ध्यान दें",
+      "emptyTitle": "कोई तत्काल समस्या नहीं",
+      "emptyDescription": "अगले 7 दिनों के लिए स्टॉक और एक्सपायरी ठीक है।",
+      "columnProduct": "उत्पाद",
+      "columnIssue": "समस्या",
+      "columnStatus": "वर्तमान स्थिति",
+      "columnAction": "कार्रवाई",
+      "more": "+{count} और {count, plural, one {वस्तु पर} other {वस्तुओं पर}} ध्यान दें",
+      "issueExpired": "एक्सपायर हो चुका",
+      "issueOutOfStock": "स्टॉक खत्म",
+      "issueLowStock": "कम स्टॉक",
+      "issueReorder": "जल्द मंगाना जरूरी",
+      "issueExpiring": "जल्द एक्सपायर",
+      "issueExpiringToday": "आज एक्सपायर",
+      "issueExpiringTomorrow": "कल एक्सपायर",
+      "issueOverstock": "अतिरिक्त स्टॉक",
+      "detailStock": "{stock} बचे · न्यूनतम {min}",
+      "detailReorder": "{stock} बचे · रीऑर्डर {reorder} पर",
+      "detailExpiry": "{qty} इकाइयां · {days, plural, one {# दिन में} other {# दिनों में}} एक्सपायर",
+      "detailExpiryToday": "{qty} इकाइयां · आज एक्सपायर",
+      "detailExpiryTomorrow": "{qty} इकाइयां · कल एक्सपायर",
+      "detailExpired": "{qty} इकाइयां · {days, plural, one {# दिन पहले} other {# दिन पहले}} एक्सपायर",
+      "detailOverstock": "{stock} इकाइयां · न्यूनतम से {multiple}×",
+      "actionRestock": "माल मंगाएं",
+      "actionReviewExpiry": "एक्सपायरी देखें",
+      "actionCreateOffer": "ऑफर बनाएं"
     },
-    "charts": {
-      "salesTrend": "बिक्री का रुझान",
-      "last7Days": "पिछले 7 दिन",
-      "topCategories": "सबसे ज्यादा बिकने वाली श्रेणियां"
+    "sales": {
+      "title": "बिक्री प्रदर्शन",
+      "subtitle": "पिछले 7 दिन",
+      "revenue": "बिक्री",
+      "units": "बिकी इकाइयां",
+      "vsPrevious": "पिछले 7 दिनों की तुलना में",
+      "noPrior": "तुलना के लिए पिछला हफ्ता नहीं",
+      "up": "{percent}% बढ़ी",
+      "down": "{percent}% घटी",
+      "flat": "स्थिर",
+      "emptyTitle": "पिछले 7 दिनों में कोई बिक्री नहीं",
+      "emptyDescription": "साप्ताहिक बिक्री रुझान देखने के लिए बिल बनाएं।",
+      "emptyAction": "बिल बनाएं",
+      "chartLabel": "साप्ताहिक बिक्री चार्ट",
+      "tooltipRevenue": "बिक्री",
+      "tooltipUnits": "इकाइयां"
     },
-    "needsAttention": {
-      "title": "ध्यान देने योग्य सामान",
-      "expiresInDays": "{days} दिनों में एक्सपायर होगा"
+    "insights": {
+      "title": "AI व्यावसायिक सुझाव",
+      "subtitle": "आपकी बिक्री और स्टॉक के आधार पर",
+      "momentumTitle": "बिक्री की गति",
+      "momentumUp": "पिछले 7 दिनों की तुलना में बिक्री {percent}% बढ़ी है।",
+      "momentumDown": "पिछले 7 दिनों की तुलना में बिक्री {percent}% घटी है।",
+      "momentumFlat": "पिछले 7 दिनों की तुलना में बिक्री स्थिर है।",
+      "momentumNoPrior": "पिछले 7 दिनों में {revenue} की बिक्री हुई। साप्ताहिक रुझान के लिए बिलिंग जारी रखें।",
+      "momentumNoSales": "पिछले 7 दिनों में कोई बिक्री नहीं। गति ट्रैक करने के लिए बिल बनाएं।",
+      "categoryTitle": "स्टॉक पर ध्यान",
+      "categoryShare": "{category} आपके स्टॉक मूल्य का {percent}% है ({value})।",
+      "categorySpread": "आपका स्टॉक {count, plural, one {# श्रेणी में} other {# श्रेणियों में}} है। {category} सबसे बड़ी श्रेणी है ({percent}%)।",
+      "categoryConcentrated": "{category} आपके स्टॉक मूल्य का {percent}% है ({value})। एक ही श्रेणी में ज्यादा पैसा न फंसाएं।",
+      "cashTitle": "फंसा हुआ पैसा",
+      "cashSlow": "इस हफ्ते बिना बिक्री वाले उत्पादों में {value} फंसा है।",
+      "cashClear": "इस हफ्ते हर स्टॉक वाले उत्पाद की कम से कम एक बिक्री हुई।"
     },
-    "aiInsight": {
-      "title": "एआई मांग विश्लेषण",
-      "description": "इस सप्ताहांत त्योहार के कारण पैकेज्ड ड्रिंक्स की मांग बढ़ने की संभावना है।",
-      "action": "नया माल मंगाएं"
+    "inventory": {
+      "title": "स्टॉक की जानकारी",
+      "subtitle": "स्टॉक मिश्रण, तेज और धीमे बिकने वाले उत्पाद",
+      "distributionTitle": "स्टॉक वितरण",
+      "distributionSubtitle": "श्रेणी के अनुसार उपलब्ध इकाइयां",
+      "categoryDistributionTitle": "{category} में स्टॉक",
+      "categoryDistributionSubtitle": "उत्पाद के अनुसार उपलब्ध इकाइयां",
+      "distributionEmptyTitle": "कोई स्टॉक नहीं",
+      "distributionEmptyDescription": "स्टॉक मिश्रण देखने के लिए उत्पाद और बैच जोड़ें।",
+      "fastTitle": "तेज बिकने वाले",
+      "fastSubtitle": "इस हफ्ते के टॉप सेलर",
+      "fastEmpty": "इस हफ्ते अभी कोई बिक्री नहीं।",
+      "fastUnits": "{count, plural, one {# इकाई} other {# इकाइयां}}",
+      "slowTitle": "धीमे बिकने वाले",
+      "slowSubtitle": "पिछले 7 दिनों में कोई बिक्री नहीं",
+      "slowNoSales": "पहले बिल के बाद बिक्री इतिहास दिखेगा।",
+      "slowEmpty": "इस हफ्ते कोई धीमा स्टॉक नहीं।",
+      "slowStock": "{count} स्टॉक में",
+      "slowValue": "{value} फंसा है",
+      "unitsLabel": "इकाइयां",
+      "tooltipValue": "स्टॉक मूल्य",
+      "chartLabel": "श्रेणी के अनुसार स्टॉक वितरण"
     },
-    "recentActivity": {
-      "title": "हाल की गतिविधि",
-      "stockUpdated": "पारले-जी बिस्कुट का स्टॉक अपडेट किया गया",
-      "newProductAdded": "नया उत्पाद जोड़ा गया: आशीर्वाद आटा 5kg",
-      "expiryAlert": "एक्सपायरी चेतावनी: अमूल बटर (3 पैकेट)",
-      "lowStockAlert": "कम स्टॉक चेतावनी: फॉर्च्यून तेल"
+    "empty": {
+      "title": "अपनी दुकान सेट करें",
+      "description": "स्टॉक, बिक्री और एक्सपायरी एक जगह ट्रैक करने के लिए पहला उत्पाद जोड़ें।",
+      "addFirst": "पहला उत्पाद जोड़ें",
+      "scanPack": "पैक स्कैन करें",
+      "step1Title": "उत्पाद जोड़ें",
+      "step1Desc": "उत्पाद और उसका पहला बैच बनाएं।",
+      "step2Title": "बिल बनाएं",
+      "step2Desc": "बिक्री से डैशबोर्ड अपने आप अपडेट होगा।",
+      "step3Title": "जानकारी ट्रैक करें",
+      "step3Desc": "स्टॉक, एक्सपायरी और मांग के रुझान देखें।"
     }
   },
   "inventory": {
@@ -291,4 +370,3 @@
     "rights": "सर्वाधिकार सुरक्षित। भारतीय किराना और रिटेल स्टोर्स के लिए निर्मित।"
   }
 }
-
